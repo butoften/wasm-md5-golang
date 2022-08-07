@@ -5,7 +5,9 @@ wasm孵化器
 * go本身生成wasm
 ```go
 GOOS=js GOARCH=wasm go build -o xxx.wasm
-GOOS=js GOARCH=wasm go build -o src/wasm/md5.wasm
+GOOS=js GOARCH=wasm go build -o ../src/wasm/md5.wasm
+
+gzip --best md5.wasm
 ```
 * tinygo生成wasm
 ```go
@@ -14,6 +16,7 @@ brew install tinygo
 
 tinygo version
 tinygo build -o xxx-tiny.wasm
+tinygo build -o ../src/wasm/md5-tiny.wasm
 ```
 
 * 原生编译
