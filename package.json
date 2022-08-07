@@ -1,0 +1,16 @@
+{
+  "name": "wasm",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:butoften/wasm.git",
+  "author": "dream798 <dream798@live.com>",
+  "license": "MIT",
+  "scripts": {
+    "server": "live-server ./src/ --port=8181 --host=localhost",
+    "build": "GOOS=js GOARCH=wasm go build -o doSomething.wasm"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  },
+  "dependencies": {}
+}
