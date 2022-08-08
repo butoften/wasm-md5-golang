@@ -1,6 +1,16 @@
 # wasm
 wasm孵化器
 
+### 启动前端静态服务器
+```
+yarn
+yarn server
+```
+如果遇到报错：env: node\r: No such file or directory 
+说明是文件回车换行问题，我的mac系统解决方案是，用你的编辑器比如vscode 打开node_module里live-server文件夹
+把index.js与live-server.js的 crlf改成lf
+再执行yarn server
+
 ### macos
 * go本身生成wasm
 ```go

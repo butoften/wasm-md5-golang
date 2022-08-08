@@ -16,7 +16,7 @@
     }
 
     const go = new Go();
-    WebAssembly.instantiateStreaming(fetch('wasm/md5.wasm'), go.importObject)
+    WebAssembly.instantiateStreaming(fetch('md5.wasm'), go.importObject)
       .then(res => {
         go.run(res.instance); // 执行 golang里 main 方法
       });

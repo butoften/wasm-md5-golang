@@ -6,7 +6,7 @@
   "author": "dream798 <dream798@live.com>",
   "license": "MIT",
   "scripts": {
-    "server": "live-server ./src/ --port=8181 --host=localhost",
+    "server": "live-server ./ --port=8181 --host=localhost",
     "build": "GOOS=js GOARCH=wasm go build -o doSomething.wasm"
   },
   "devDependencies": {
