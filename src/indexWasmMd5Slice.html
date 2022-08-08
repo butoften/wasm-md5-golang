@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>文件md5</title>
+  <script src="./wasm_exec.js"></script>
+  <!-- <script src="./wasm_exec_tiny.js"></script> -->
+</head>
+
+<body>
+  <script>
+
+    function handleSayHello(message) {
+      console.lof('str from go', message)
+    }
+
+    const go = new Go();
+    WebAssembly.instantiateStreaming(fetch('wasm/md5.wasm'), go.importObject)
+      .then(res => {
+        go.run(res.instance); // 执行 golang里 main 方法
+      });
+    /* WebAssembly.instantiateStreaming(fetch('wasm/md5-tiny.wasm'), go.importObject)
+      .then(res => {
+        go.run(res.instance); // 执行 golang里 main 方法
+      });//分段md5时卡死 */
+  </script>
+  <input id="file" type="file" />
+  <script>
+    document.querySelector('#file').addEventListener('change', e => {
+      let startTime = Date.now()
+      const file = e.target.files[0];
+      const fileReader = new FileReader()
+      console.log('size', file.size / 1024 / 1024 / 1024, "G")
+
+      fileReader.onprogress = e => {
+        console.log(`${Math.floor((e.loaded / e.total) * 100)}%`)
+      }
+      let usedTime = 0
+      let index = 0
+      const sliceSize = 512
+      const chunkSize = sliceSize * 1024 * 1024;//file.size / count
+      let count = Math.ceil(file.size / chunkSize)
+      console.log('分几份', count)
+
+      loadSliceFile();
+      function loadSliceFile() {
+        const sliceFile = file.slice(index * chunkSize, index * chunkSize + chunkSize)
+        fileReader.readAsArrayBuffer(sliceFile);
+      }
+      fileReader.onload = e => {
+        index += 1;
+        const bytes = new Uint8Array(e.target.result)
+        wasmMd5Add(bytes)
+        if (index < count) {
+          loadSliceFile()
+        }
+        else {
+          const md5Hash = wasmMd5End()
+          usedTime += Date.now() - startTime
+          console.log('usedTime', usedTime, 'ms')
+          console.log('md5', md5Hash)
+        }
+      }
+
+    });
+  </script>
+</body>
+
+</html>

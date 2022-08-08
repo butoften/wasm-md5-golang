@@ -3,11 +3,8 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>文件md5</title>
   <script src="./wasm_exec.js"></script>
-  <!-- <script src="./wasm_exec_tiny.js"></script> -->
 </head>
 
 <body>
@@ -17,15 +14,11 @@
       console.lof('str from go', message)
     }
 
-    const go = new Go(); // wasm_exec.js 中的定义
+    const go = new Go();
     WebAssembly.instantiateStreaming(fetch('wasm/md5.wasm'), go.importObject)
       .then(res => {
-        go.run(res.instance); // 执行 go main 方法
+        go.run(res.instance);
       });
-    /* WebAssembly.instantiateStreaming(fetch('wasm/md5-tiny.wasm'), go.importObject)
-      .then(res => {
-        go.run(res.instance); // 执行 go main 方法
-      });//分段md5时卡死 */
   </script>
   <input id="file" type="file" />
   <script>
@@ -34,102 +27,20 @@
       const file = e.target.files[0];
       const fileReader = new FileReader()
       console.log('size', file.size / 1024 / 1024 / 1024, "G")
-      // console.log('type after change', file)
-
       fileReader.onprogress = e => {
         console.log(`${Math.floor((e.loaded / e.total) * 100)}%`)
       }
       let usedTime = 0
-      let index = 0
-      const sliceSize = 512 / 2
-      const chunkSize = sliceSize * 1024 * 1024;//file.size / count
-      // const chunkSize = 512 * 2 * 10 * 1024 * 1024;//file.size / count
-      let count = Math.ceil(file.size / chunkSize)
-      console.log('分几份', count)
-
-      loadSliceFile();
-      function loadSliceFile() {
-        const sliceFile = file.slice(index * chunkSize, index * chunkSize + chunkSize)
-        fileReader.readAsArrayBuffer(sliceFile);
-      }
+      fileReader.readAsArrayBuffer(file);
       fileReader.onload = e => {
-        index += 1;
         const bytes = new Uint8Array(e.target.result)
         wasmMd5Add(bytes)
-        if (index < count) {
-          loadSliceFile()
-        }
-        else {
-          const md5Hash = wasmMd5End()
-          usedTime += Date.now() - startTime
-          console.log('usedTime', usedTime, 'ms')
-          console.log('md5', md5Hash)
-        }
+        const md5Hash = wasmMd5End()
+        usedTime += Date.now() - startTime
+        console.log('usedTime', usedTime, 'ms')
+        console.log('md5', md5Hash)
       }
-
-      /* loadSliceFile();
-      function loadSliceFile() {
-        const sliceFile = file.slice(index * chunkSize, index * chunkSize + chunkSize)
-        // fileReader.readAsBinaryString(sliceFile);
-        fileReader.readAsArrayBuffer(sliceFile);
-      }
-      fileReader.onload = e => {
-        index += 1;
-        // startTime = Date.now()
-        const bytes = new Uint8Array(e.target.result)
-        const md5v = getFileMd5(bytes)
-        console.log('每次 md5', md5v)
-        if (index < count) {
-          // usedTime += Date.now() - startTime
-          loadSliceFile()
-        }
-        else {
-          usedTime += Date.now() - startTime
-          console.log('usedTime', usedTime, 'ms')
-          console.log('md5', md5v)
-        }
-      } */
     });
-
-//js:
-//22多Mb的文件
-//usedTime 451 ms  434ms
-//1d669eeb45dfe2b224c883c77fbeaa11
-
-//1.39G
-//usedTime 11386 ms  17136ms 12665 ms
-//d41d8cd98f00b204e9800998ecf8427e
-
-//12MB
-//usedTime 239 ms  230ms
-//618ca856cd926a5ec7999a0820bc57da
-
-//1.9G
-//usedTime 9204ms
-
-
-//golang:
-//22MB
-// golang elapsed: 204.199936ms 184ms
-// 1d669eeb45dfe2b224c883c77fbeaa11
-// js总用时 213 ms
-
-//1.39G
-//elapsed: 19.761100032s  18.99s 14.584900096s 16.34 s
-//4b26c974ebb21f5bdfe3ae04a8d322b3
-//js总用时 19834 ms 19000 1458.49ms
-
-//12mb
-//elapsed: 88.400128ms  90ms
-//618ca856cd926a5ec7999a0820bc57da
-//js总用时 94 ms 95ms
-
-//1.9G
-//usedTime 23650ms
-
-//elapsed: 27.159699968s   32979 ms
-//50170233fe7bf55d992e017c892029f5
-//js总用时 27203 ms
   </script>
 </body>
 
