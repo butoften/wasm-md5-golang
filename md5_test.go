@@ -10,14 +10,14 @@ import (
 	"testing"
 )
 
-var path = flag.String("path", "/Users/wuhao/Downloads/PXH/v/pxh-015.mp4", "")
+var path = flag.String("path", "/Users/wuhao/Downloads/测试视频/600M.mp4", "")
 
 //4b26c974ebb21f5bdfe3ae04a8d322b3
 // var path = flag.String("path", "/Users/wuhao/Downloads/test.jpeg", "")
 
 func TestMd5(t *testing.T) {
-	// aaa() //15.14s 8.744s 6.161s 7.683s 9.903s 5.938s
-	bbb() //3.136s 3.138s 2.999s 3.125s 4.582s 3.398s
+	aaa() //15.14s 8.744s 6.161s 7.683s 9.903s 5.938s
+	//bbb() //3.136s 3.138s 2.999s 3.125s 4.582s 3.398s
 }
 
 func aaa() {
