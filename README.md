@@ -32,7 +32,7 @@ cp "$(tinygo env TINYGOROOT)/targets/wasm_exec.js" ./wasm_exec_tiny.js
 
 
 ### windows
-临时设置 golang 环境参数（仅作用于当前CMD）
+临时设置 golang 环境参数 (本人没测试，window系统建议使用git bash来操作，git bash会模拟linux环境)
 * set GOOS=js 
 * set GOARCH=wasm
 * go build -o main.wasm
